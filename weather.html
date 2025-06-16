@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #search-input {
+            padding: 12px 20px;
+            width: 60%;
+            max-width: 500px;
+            border: none;
+            border-radius: 30px 0 0 30px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #search-btn {
+            padding: 12px 25px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        #search-btn:hover {
+            background-color: #ff5252;
+        }
+
+        .weather-display {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .current-weather {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+        }
+
+        .weather-icon {
+            font-size: 5rem;
+            margin-right: 20px;
+        }
+
+        .temperature {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .weather-details {
+            text-align: right;
+        }
+
+        .city-name {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .weather-description {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+        }
+
+        .detail-item {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .forecast-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .forecast-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .forecast-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .forecast-day {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .forecast-icon {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+        .forecast-temp {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .max-temp {
+            font-weight: bold;
+        }
+
+        .min-temp {
+            opacity: 0.7;
+        }
+
+        .unit-toggle {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .unit-btn {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+
+        .unit-btn.active {
+            background-color: white;
+            color: #1e3c72;
+        }
+
+        .unit-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .current-weather {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .weather-main {
+                margin-bottom: 20px;
+                justify-content: center;
+            }
+
+            .weather-details {
+                text-align: center;
+            }
+
+            #search-input {
+                width: 70%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .temperature {
+                font-size: 3rem;
+            }
+
+            .weather-icon {
+                font-size: 4rem;
+            }
+
+            .forecast-container {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Weather Dashboard</h1>
+            <p>Get the latest weather updates for any location</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Enter city name...">
+            <button id="search-btn"><i class="fas fa-search"></i> Search</button>
+        </div>
+
+        <div class="unit-toggle">
+            <button class="unit-btn active" id="celsius-btn">°C</button>
+            <button class="unit-btn" id="fahrenheit-btn">°F</button>
+        </div>
+
+        <div class="weather-display">
+            <div class="current-weather">
+                <div class="weather-main">
+                    <div class="weather-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="temperature">24°</div>
+                </div>
+                <div class="weather-details">
+                    <h2 class="city-name">New York</h2>
+                    <p class="weather-description">Sunny</p>
+                    <p class="detail-item"><i class="fas fa-wind"></i> Wind: 12 km/h</p>
+                    <p class="detail-item"><i class="fas fa-tint"></i> Humidity: 65%</p>
+                    <p class="detail-item"><i class="fas fa-compress-alt"></i> Pressure: 1012 hPa</p>
+                </div>
+            </div>
+
+            <div class="forecast-container">
+                <div class="forecast-card">
+                    <div class="forecast-day">Mon</div>
+                    <div class="forecast-icon"><i class="fas fa-sun"></i></div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">26°</span>
+                        <span class="min-temp">18°</span>
+                    </div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-day">Tue</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">24°</span>
+                        <span class="min-temp">17°</span>
+                    </div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-day">Wed</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud"></i></div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">22°</span>
+                        <span class="min-temp">16°</span>
+                    </div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-day">Thu</div>
+                    <div class="forecast-icon"><i class="fas fa-cloud-rain"></i></div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">20°</span>
+                        <span class="min-temp">15°</span>
+                    </div>
+                </div>
+                <div class="forecast-card">
+                    <div class="forecast-day">Fri</div>
+                    <div class="forecast-icon"><i class="fas fa-sun"></i></div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">25°</span>
+                        <span class="min-temp">18°</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // This is where you would add JavaScript to fetch real weather data
+        // For now, it's just a static display
+        
+        document.getElementById('search-btn').addEventListener('click', function() {
+            const city = document.getElementById('search-input').value;
+            if (city.trim() !== '') {
+                alert(`Searching for weather in ${city}. This would fetch real data in a complete application.`);
+                // Here you would typically call a weather API
+            }
+        });
+
+        // Unit toggle functionality
+        const celsiusBtn = document.getElementById('celsius-btn');
+        const fahrenheitBtn = document.getElementById('fahrenheit-btn');
+        
+        celsiusBtn.addEventListener('click', function() {
+            if (!this.classList.contains('active')) {
+                this.classList.add('active');
+                fahrenheitBtn.classList.remove('active');
+                // Convert temperatures to Celsius
+                document.querySelector('.temperature').textContent = '24°';
+                document.querySelectorAll('.max-temp').forEach(el => el.textContent = '26°');
+                document.querySelectorAll('.min-temp').forEach(el => el.textContent = '18°');
+            }
+        });
+        
+        fahrenheitBtn.addEventListener('click', function() {
+            if (!this.classList.contains('active')) {
+                this.classList.add('active');
+                celsiusBtn.classList.remove('active');
+                // Convert temperatures to Fahrenheit
+                document.querySelector('.temperature').textContent = '75°';
+                document.querySelectorAll('.max-temp').forEach(el => el.textContent = '79°');
+                document.querySelectorAll('.min-temp').forEach(el => el.textContent = '64°');
+            }
+        });
+    </script>
+</body>
+</html>
